@@ -1,0 +1,148 @@
+/* @import url('https://fonts.googleapis.com/css2?family=Kadwa:wght@400;700&family=Keania+One&family=Poppins:wght@100;300;400;500;600&display=swap');
+
+* {
+    font-family: 'Kadwa', serif;
+}
+
+input {
+    background: none;
+}
+
+::-webkit-input-placeholder,
+::placeholder,
+::-moz-placeholder {
+    color: #6F0E7E;
+}
+
+input {
+    color: #6F0E7E;
+}
+
+.popup-forgotpass,
+.popup-reset-pass,
+.popup-otp {
+    position: absolute;
+    top: 0;
+    z-index: 10000000;
+    height: 100vh;
+    width: 100vw;
+    background: rgba(0, 0, 0, .5);
+    backdrop-filter: blur(5px);
+    display: none;
+    justify-content: center;
+}
+
+.popup {
+    width: 370px;
+    height: 400px;
+    border-radius: 5px;
+    background: #fff;
+    transition: 2s;
+}
+
+
+.popup-forgotpass .popup {
+    height: 300px;
+}
+
+.popup-otp .popup {
+    height: 480px;
+}
+
+.popup form .input-group {
+    border: 1px solid rgba(0, 0, 0, .2);
+    padding: 8px;
+    padding-left: 10px;
+    border-radius: 5px;
+    width: 80%;
+    margin: 8px;
+}
+
+.popup form i {
+    font-size: large;
+    margin-right: 5px;
+}
+
+.popup form input,
+button {
+    border: none;
+    outline: none;
+
+}
+
+.popup-reset-pass .popup {
+    height: 400px;
+
+}
+
+.popup form button {
+    width: 80%;
+    padding: 8px;
+    border-radius: 5px;
+    margin: 8px;
+    background: #932e3e;
+    color: #fff;
+}
+
+:root {
+    --background-color: #fff;
+    --active: #7f8084;
+    --border: #b7b8bc;
+}
+
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.Avatar {
+    height: 150px;
+    width: 150px;
+    border: 5px solid blueviolet;
+    border-radius: 50%;
+    margin-bottom: 20px;
+}
+
+.Avatar img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+}
+
+.dig {
+    height: 40px;
+    width: 40px;
+    margin: 5px;
+    border-radius: 5px;
+    border: 1.5px solid var(--border);
+    color: blueviolet;
+    font-weight: bold;
+
+}
+
+.otp input {
+    position: absolute;
+    width: 300px;
+    height: 40px;
+    opacity: 0;
+}
+
+.verify-btn {
+    margin-top: 10px;
+    background: blueviolet;
+    color: white;
+    padding: 10px;
+    width: 30%;
+    border: none;
+    border-radius: 5px;
+}
+
+.expire {
+    color: darkred;
+    font-size: small;
+    text-align: end;
+    width: 80%;
+    margin: 5px;
+} */
