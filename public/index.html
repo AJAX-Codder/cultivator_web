@@ -30,39 +30,7 @@
   <noscript>You need to enable JavaScript to run this app.</noscript>
   <div id="root"></div>
   <script>
-    const toggleFullScreen = () => {
-      if (
-        (document.fullScreenElement !== undefined &&
-          document.fullScreenElement === null) ||
-        (document.msFullscreenElement !== undefined &&
-          document.msFullscreenElement === null) ||
-        (document.mozFullScreen !== undefined && !document.mozFullScreen) ||
-        (document.webkitIsFullScreen !== undefined &&
-          !document.webkitIsFullScreen)
-      ) {
-        if (document.documentElement.requestFullScreen) {
-          document.documentElement.requestFullScreen();
-        } else if (document.documentElement.mozRequestFullScreen) {
-          document.documentElement.mozRequestFullScreen();
-        } else if (document.documentElement.webkitRequestFullScreen) {
-          document.documentElement.webkitRequestFullScreen(
-            Element.ALLOW_KEYBOARD_INPUT
-          );
-        } else if (document.documentElement.msRequestFullscreen) {
-          document.documentElement.msRequestFullscreen();
-        }
-      } else {
-        if (document.cancelFullScreen) {
-          document.cancelFullScreen();
-        } else if (document.mozCancelFullScreen) {
-          document.mozCancelFullScreen();
-        } else if (document.webkitCancelFullScreen) {
-          document.webkitCancelFullScreen();
-        } else if (document.msExitFullscreen) {
-          document.msExitFullscreen();
-        }
-      }
-    };
+
     $(document).ready(() => {
       var body = $('body');
       var HOME = $('#HOME');
@@ -75,33 +43,6 @@
       var traders = $("#Traders");
       var tdImg = $("#tdImg");
       var Farmer = $(".Farmer");
-      $("#fullscreen-button").on("click", toggleFullScreen);
-      let click = true;
-      $('[data-toggle="minimize"]').on("click", () => {
-
-        if (click) {
-          tdImg.animate({
-            width: "50px",
-            height: "50px"
-          }, 300);
-        }
-        else {
-          tdImg.animate({
-            width: "150px",
-            height: "150px"
-          }, 400);
-        }
-        click = !click;
-        if (body.hasClass('sidebar-toggle-display') || body.hasClass('sidebar-absolute')) {
-          body.toggleClass('sidebar-hidden');
-          traders.toggleClass("d-flex");
-        } else {
-          traders.toggleClass("d-none");
-          body.toggleClass('sidebar-icon-only');
-        }
-      });
-
-
       //DASHBOARD
       HOME.on("click", () => {
         Index.css('display', 'block');

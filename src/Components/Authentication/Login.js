@@ -2,15 +2,21 @@ import React, { useEffect, useState } from 'react';
 import '../../assets/css/login.css';
 import $ from 'jquery';
 import Swal from 'sweetalert2';
-import { setSignIn } from '../../redux/slices/authSlice';
+import { ModifySelection, setSignIn } from '../../redux/slices/authSlice';
 import { useDispatch } from 'react-redux'
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
-import { getFirestore, collection, query, where, getDocs } from 'firebase/firestore';
+import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 import { firebase } from '../../config/firebase';
+import { URL } from '../../config/url';
+import Cookies from 'js-cookie';
+import { ColorRing } from 'react-loader-spinner';
+import { toast } from 'react-toastify';
 const auth = getAuth(firebase);
-const db = getFirestore();
 const LoginForm = () => {
+    const [isLoading, setLoading] = useState(false);
+    const [isLoading2, setLoading2] = useState(false);
     const dispatch = useDispatch();
+    const [id, setId] = useState(0);
+    const [emailId, setEmailID] = useState("");
     const [credential, setCredential] = useState({
         email: "",
         password: "",
@@ -22,148 +28,104 @@ const LoginForm = () => {
     }
     const handleData = async (e) => {
         e.preventDefault();
+        setLoading(true)
         const { email, password } = credential;
-
         try {
-            const userCredential = await signInWithEmailAndPassword(auth, email, password);
-            const response = await fetch(`https://cultivator-d9052-default-rtdb.firebaseio.com/Cultivator.json`);
+            await signInWithEmailAndPassword(auth, email, password);
+            const response = await fetch(`${URL}/Cultivator.json`);
             const { Traders } = await response.json();
             let traders = null;
             let flag = false;
-            for (const traderId in Traders) {
-                const trader = Traders[traderId];
+            for (let i = 0; i < Traders.length; i++) {
+                const trader = Traders[i];
                 if (trader.Email === email) {
                     traders = trader;
+                    setId(i);
                     flag = true;
                     break;
                 }
             }
             if (flag) {
                 const data = {
-                    id: email,
+                    id: id,
                     isLoggedIn: true,
                     traders: traders,
+                    selection: {
+                        TraderId: id,
+                        FarmerIndex: null,
+                        FolderIndex: null,
+                        EntryIndex: null
+                    }
                 };
-                dispatch(setSignIn(data));
-            }
-            else {
-                alert("Invalid")
+                dispatch(ModifySelection({
+                    TraderId: id,
+                    FarmerIndex: null,
+                    FolderIndex: null,
+                    EntryIndex: null
+                }))
+                toast.success(`પધારો.. ${traders?.Name}!`, {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: false,
+                    progress: undefined,
+                    theme: "dark",
+                });
+                setTimeout(() => {
+                    dispatch(setSignIn(data));
+                }, 3500);
             }
         } catch (error) {
-            console.log(error);
+            toast.error('ખોટી માહિતી છે.. !', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: false,
+                progress: undefined,
+                theme: "dark",
+            });
+        }
+        finally {
+            setLoading(false)
         }
     };
-    useEffect(() => {
-        // $(document).on("submit", "#Verify-OTP-Form", (e) => {
-        //     e.preventDefault();
-        //     $.ajax({
-        //         type: "post",
-        //         url: "./PHP/Verify_OTP.php",
-        //         data: {
-        //             UserOTP: $("#input").val()
-        //         },
-        //         success: function (response) {
-        //             if (response === "Valid") {
-        //                 $(".popup-reset-pass").css('display', 'flex');
-        //             } else {
-        //                 alert(response);
-        //             }
-        //         }
-        //     });
-        //     $(".popup-otp").css('display', 'none');
-        // });
-        // $(document).on("submit", "#reset-pass", (e) => {
-        //     e.preventDefault();
-        //     if ($("#NewPass").val() === $("#RePass").val()) {
-        //         $.ajax({
-        //             type: "post",
-        //             url: "./PHP/ChangePassord.php",
-        //             data: {
-        //                 Pass: $("#NewPass").val(),
-        //                 Email: $("#REMAIL").val()
-        //             },
-        //             success: function (response) {
-        //                 if (response === "Password Changed...") {
-        //                     Swal.fire(
-        //                         'Good job!',
-        //                         'Password Changed..',
-        //                         'success'
-        //                     );
-        //                     $(".popup-reset-pass").css('display', 'none');
-        //                 } else {
-        //                     Swal.fire(
-        //                         'Ohh!',
-        //                         'Something Went Wrong',
-        //                         'error'
-        //                     );
-        //                 }
-        //             }
-        //         });
-        //     } else {
-        //         alert("Password Not Match...!!");
-        //     }
-        // });
-        // $(document).ready(function () {
-        //     if (window.innerWidth <= 800) {
-        //         $("#left").addClass('d-none');
-        //         $("#right").removeClass('w-50');
-        //         $("#right").css('width', "80%");
-        //         $("h2").css("text-align", "center");
-        //         $("#form").addClass('align-items-center');
-        //     }
-
-        //     /* popup Control */
-        //     $(document).on("click", ".act5", () => {
-        //         $(".popup-login").css('display', 'flex');
-        //     });
-        //     $(document).on("click", "#close", () => {
-        //         $(".popup-login").css('display', 'none');
-        //         $(".popup-register").css('display', 'none');
-        //         $(".popup-forgotpass").css('display', 'none');
-        //         $(".popup-otp").css('display', 'none');
-        //     });
-        //     $(document).on("click", "#new-user", () => {
-        //         $(".popup-login").css('display', 'none');
-        //         $(".popup-register").css('display', 'flex');
-        //     });
-        //     $(document).on("click", "#old-user", () => {
-        //         $(".popup-login").css('display', 'flex');
-        //         $(".popup-register").css('display', 'none');
-        //     });
-        //     $(document).on("click", "#Forgot", (e) => {
-        //         e.preventDefault();
-        //         $(".popup-login").css('display', 'none');
-        //         $(".popup-register").css('display', 'none');
-        //         $(".popup-forgotpass").css('display', 'flex');
-        //     });
-        //     $(document).on("submit", "#send-otp", (e) => {
-        //         e.preventDefault();
-        //         $.ajax({
-        //             type: "post",
-        //             url: "./PHP/ChangePass.php",
-        //             data: {
-        //                 EMAIL: $("#REMAIL").val()
-        //             },
-        //             success: function (response) {
-        //                 alert(response);
-        //             }
-        //         });
-        //         $(".popup-forgotpass").css('display', 'none');
-        //         $(".popup-otp").css('display', 'flex');
-        //         let curtime = new Date().getTime();
-        //         let expiretime = curtime + 60000;
-        //         let x = setInterval(() => {
-        //             curtime = new Date().getTime();
-        //             if ((expiretime - curtime) > 0) {
-        //                 $("#expire-text").text("OTP expires after: " + Math.floor((expiretime - curtime) / 1000) + "s");
-        //             } else {
-        //                 $("#expire-text").text("OTP expired...!!");
-        //                 clearInterval(x);
-        //             }
-        //         }, 1000);
-        //     });
-        // });
-    }, []);
+    $(document).on("click", "#close", (e) => {
+        e.preventDefault();
+        $(".popup-forgotpass").addClass('d-none');
+        $(".popup-forgotpass").removeClass('d-flex');
+    });
+    $(document).on("click", "#Forgot", (e) => {
+        e.preventDefault();
+        $(".popup-forgotpass").addClass('d-flex');
+        $(".popup-forgotpass").removeClass('d-none');
+    });
+    const handleForget = (e) => {
+        setLoading2(true);
+        e.preventDefault();
+        sendPasswordResetEmail(auth, emailId)
+            .then(() => {
+                Swal.fire(
+                    'Reset Link',
+                    'Check Your Mail..!',
+                    'success'
+                );
+            })
+            .catch((error) => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'ખાતું ઉપલબ્ધ નથી.. ',
+                });
+            }).finally(() => {
+                setLoading2(false);
+                $(".popup-forgotpass").addClass('d-none');
+                $(".popup-forgotpass").removeClass('d-flex')
+            });
+    }
     return (
         <>
             <div className="container-scroller">
@@ -249,17 +211,25 @@ const LoginForm = () => {
                                                     required
                                                 />
                                             </div>
-                                            <div id="Forgot" style={{ width: '80%', fontSize: '14px', color: '#6F0E7E', textAlign: 'right', paddingTop: '10px' }}>
+                                            <div id="Forgot" style={{ width: '80%', fontSize: '14px', color: '#6F0E7E', textAlign: 'right', paddingTop: '10px' }} >
                                                 forgot password ?
                                             </div>
                                             <div style={{ width: '80%', fontSize: '14px', color: '#6F0E7E', paddingTop: '10px' }}>
                                                 <input type="checkbox" name="remember" id="chk" /> Remember Me
                                             </div>
-                                            <div style={{ marginTop: '15px', width: '80%' }}>
-                                                <button className="btn btn-gradient-primary" name="SubmitBtn" type="submit">
-                                                    Log In
+                                            {<div style={{ marginTop: '15px', width: '80%' }}>
+                                                <button className="btn btn-gradient-primary p-0" name="SubmitBtn" type="submit" style={{ width: 100, height: 45 }}>
+                                                    {isLoading ? <ColorRing
+                                                        visible={true}
+                                                        height="40"
+                                                        width="40"
+                                                        ariaLabel="blocks-loading"
+                                                        wrapperStyle={{}}
+                                                        wrapperClass="blocks-wrapper"
+                                                        colors={['#e15b64', '#f47e60', '#f8b26a', '#abbd81', '#849b87']}
+                                                    /> : "Log In"}
                                                 </button>
-                                            </div>
+                                            </div>}
                                             <div className="separator d-flex justify-content-between" style={{ width: '80%', marginTop: '20px', color: '#6F0E7E', opacity: '.9' }}>
                                                 <div style={{ borderBottom: '2px solid #6F0E7E', height: '15px', width: '40%', opacity: '.7' }}></div>
                                                 OR
@@ -305,7 +275,7 @@ const LoginForm = () => {
                     </div>
                 </div>
             </div>
-            {/* <div className="popup-forgotpass d-none">
+            <div className="popup-forgotpass d-none">
                 <div className="popup">
                     <i className="mdi mdi-close" id="close" aria-hidden="true" style={{ float: 'right', margin: '5px', marginRight: '10px', fontWeight: 'bold', cursor: 'pointer' }}></i>
                     <form
@@ -324,77 +294,21 @@ const LoginForm = () => {
                         <br />
                         <div className="input-group">
                             <i className="fa-solid fa-user"></i>
-                            <input type="email" id="REMAIL" placeholder="Enter your Email" value="" required />
+                            <input type="email" id="REMAIL" placeholder="Enter your Email" value={emailId} onChange={(e) => setEmailID(e.target.value)} required />
                         </div>
-                        <button type="submit" className="bg-gradient-primary">Send OTP</button>
+                        <button type="submit" className="bg-gradient-primary" onClick={handleForget}>
+                            {isLoading2 ? <ColorRing
+                                visible={true}
+                                height="40"
+                                width="40"
+                                ariaLabel="blocks-loading"
+                                wrapperStyle={{}}
+                                wrapperClass="blocks-wrapper"
+                                colors={['#e15b64', '#f47e60', '#f8b26a', '#abbd81', '#849b87']}
+                            /> : "Send OTP"}</button>
                     </form>
                 </div>
             </div>
-            <div className="popup-reset-pass d-none">
-                <div className="popup">
-                    <i className="mdi mdi-close" id="close" aria-hidden="true" style={{ float: 'right', margin: '5px', marginRight: '10px', fontWeight: 'bold', cursor: 'pointer' }}></i>
-                    <form
-                        action=""
-                        id="reset-pass"
-                        style={{
-                            height: '100%',
-                            width: '100%',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                        }}
-                    >
-                        <h2 style={{ color: 'rgba(0, 0, 0, .8)', fontFamily: 'Cambria, Cochin, Georgia, Times, "Times New Roman", serif' }}>Change Password</h2>
-                        <br />
-                        <div className="input-group">
-                            <i className="fa-solid fa-lock"></i>
-                            <input type="text" id="NewPass" placeholder="New Password" required
-                            />
-                        </div>
-                        <div className="input-group">
-                            <i className="fa-solid fa-lock"></i>
-                            <input type="password" id="RePass" placeholder="Re-Type Password" required />
-                        </div>
-                        <button type="submit" className="bg-gradient-primary">Change Password</button>
-                    </form>
-                </div>
-            </div>
-            <div className="popup-otp d-none">
-                <div className="popup">
-                    <i className="mdi mdi-close" id="close" aria-hidden="true" style={{ float: 'right', margin: '10px', color: 'rgba(0, 0, 0, .2)', fontWeight: 'bold', cursor: 'pointer' }}></i>
-                    <form
-                        className="Verify-model-content"
-                        id="Verify-OTP-Form"
-                        style={{
-                            height: '100%',
-                            width: '100%',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                        }}
-                    >
-                        <div className="Avatar" dropzone="true">
-                            <img src="./Avatar.jpg" alt="" srcSet="" />
-                        </div>
-                        <span style={{ color: 'blueviolet', fontWeight: 'bold', fontSize: '16px', fontFamily: '"Segoe UI", Tahoma, Geneva, Verdana, sans-serif', margin: '10px' }}>One Time Password</span>
-                        <div className="otp center">
-                            <input type="number" id="input" className="input" name="OTP" onInput="OTP_Verify()" pattern="[0-9]{6}" required title="" />
-                            <span className="dig center"></span>
-                            <span className="dig center"></span>
-                            <span className="dig center"></span>
-                            <span className="dig center"></span>
-                            <span className="dig center"></span>
-                            <span className="dig center"></span>
-                        </div>
-                        <div className="expire">otp expire after 2:6</div>
-                        <button className="verify-btn" type="submit" style={{ background: 'blueviolet' }}>
-                            Verify OTP
-                        </button>
-                    </form>
-                </div>
-            </div> */}
         </>
     );
 };
