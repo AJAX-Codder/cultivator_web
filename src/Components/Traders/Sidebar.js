@@ -9,7 +9,7 @@ const Sidebar = () => {
     let id = useSelector(selectId);
     let { Name, Trade, TradeImg, Farmers } = useSelector(selectTraders);
     const dispatch = useDispatch();
-    const AddFarmer = async (lastID, index) => {
+    const AddFarmer = async () => {
 
         Swal.fire({
             title: 'નવા ખેડૂતને ઉમેરો',
@@ -48,28 +48,23 @@ const Sidebar = () => {
 
                 const currentYear = currentDate.getFullYear();
                 const newFarmer = {
-                    ID: (parseInt(lastID) + 1).toString(),
                     Name: NewName,
                     Village: NewVillage,
                     Mobile: NewMobile,
                     Pic: 'https://w7.pngwing.com/pngs/534/724/png-transparent-farmer-agriculture-selling-food-food-vertebrate-agriculture-thumbnail.png',
                     Balance: 0,
                     Date: formattedDate,
-                    Folder: [{
-                        Balance: 0,
-                        Invoice: [],
-                        MFID: "0",
-                        Year: currentYear
-                    }]
+                    Folder: {}
                 };
                 return newFarmer;
             }
         }).then((response) => {
             if (response.isConfirmed) {
                 let newFarmer = response.value;
+                let FID = ""
                 try {
-                    dataRef.ref(`/Cultivator/Traders/${id}/Farmers/${index}`).set(newFarmer);
-                    dispatch(addFarmer(newFarmer));
+                    FID = dataRef.ref(`/Cultivator/Traders/${id}/Farmers/`).push(newFarmer).key;
+                    dispatch(addFarmer({ ...newFarmer, FID }));
                     toast.success('ખેડૂત ઉમેરાયો.. !', {
                         position: "top-right",
                         autoClose: 3000,
@@ -81,6 +76,7 @@ const Sidebar = () => {
                         theme: "dark",
                     });
                 } catch (error) {
+                    console.log(error)
                     toast.error('કૈંક વાંધો છે.. !', {
                         position: "top-right",
                         autoClose: 3000,
@@ -114,7 +110,7 @@ const Sidebar = () => {
                 </li>
                 <li className="nav-item sidebar-actions">
                     <span className="nav-link">
-                        <button className="btn btn-block btn-lg btn-gradient-primary " id="ADDKHEDUT" style={{ position: 'absolute', bottom: 10 }} onClick={() => AddFarmer(Farmers[Farmers.length - 1]?.ID, Farmers?.length)}>
+                        <button className="btn btn-block btn-lg btn-gradient-primary " id="ADDKHEDUT" style={{ position: 'absolute', bottom: 10 }} onClick={() => AddFarmer()}>
                             + ખેડૂત ઉમેરો
                         </button>
                     </span>

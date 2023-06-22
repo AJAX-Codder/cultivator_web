@@ -45,6 +45,11 @@ const LoginForm = () => {
                     break;
                 }
             }
+            // let Farmer = [];
+            // for (const key in traders?.Farmers) {
+            //     const element = traders?.Farmers[key];
+            //     Farmer.push({ ...element, FID: key });
+            // }
             if (flag) {
                 const data = {
                     id: id,
@@ -54,7 +59,7 @@ const LoginForm = () => {
                         TraderId: id,
                         FarmerIndex: null,
                         FolderIndex: null,
-                        EntryIndex: null
+                        InvoiceIndex: null
                     }
                 };
                 dispatch(ModifySelection({

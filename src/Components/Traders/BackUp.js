@@ -8,7 +8,7 @@ export const BackUpData = async (email, Trade) => {
         const traders = await response.json();
 
         const formData = new FormData();
-        formData.append('Reciver', "2018bharatmakwana@gmail.com");
+        formData.append('Reciver', email);
         formData.append('Trade', Trade);
         formData.append('JSON', JSON.stringify(traders));
         const backupResponse = await fetch('https://makwana-bharat.000webhostapp.com/PHP/BackUpAPI.php', {

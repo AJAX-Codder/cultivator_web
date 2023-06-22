@@ -1,40 +1,43 @@
-import React, { useState } from 'react';
-import AddFarmer from './AddFarmer';
+import React, { useState, useRef } from 'react';
 import KhedutTable from './KhedutTable';
 import ViewFarmer from './ViewFarmer';
 import $ from 'jquery';
-import Bill from './Bill';
+import { Bill } from './Bill';
 import { useSelector, useDispatch } from 'react-redux';
 import { BackUpData } from './BackUp';
 import { Vortex } from 'react-loader-spinner';
 import Swal from 'sweetalert2';
 import { dataRef } from '../../config/firebase2';
-import { selectTraders, addFolderAuth, selection, addEntry } from '../../redux/slices/authSlice';
+import { selectTraders, addFolder, selection, addEntry } from '../../redux/slices/authSlice';
 import { toast } from 'react-toastify';
-const AddFoldersAuth = (Folder, index) => addFolderAuth({ Folder, index });
+import ReactToPrint from 'react-to-print';
+const AddFoldersAuth = (Folder) => addFolder(Folder);
 const MainPanel = () => {
     const selectionIndex = useSelector(selection)
     const { Email, Trade, Farmers } = useSelector(selectTraders);
     const [isLoading, setIsLoading] = useState(false);
     const [FolderName, setFolderName] = useState("");
     let dispatch = useDispatch();
+    const componentRef = useRef();
+    const [print, setPrint] = useState(false);
     const handleNewEntry = () => {
         Swal.fire({
             title: 'નવી નોંધ',
             html: `
       <div class="form-group">
-        <input type="number" class="form-control" id="AddRupee" placeholder="રકમ (₹)">
-      </div>
-      <div class="form-group">
-        <input id="Date" class="form-control" placeholder="date" type="date">
-      </div>
-      <div class="form-group">
-        <textarea id="AddDetail" class="form-control" placeholder="વિગત"></textarea>
-      </div>
-      <div class="form-group" style="width:100%;display:flex;justify-content:space-between">
-        <div id="btnJam" class="btn bg-gradient-success text-white font-bold" style="font-weight:bold">જમા</div>
-        <div id="btnUdhar" class="btn bg-gradient-danger text-white font-bold" style="font-weight:bold">ઉધાર</div>
-      </div>
+  <input type="number" class="form-control" id="AddRupee" placeholder="રકમ (₹)">
+</div>
+<div class="form-group">
+  <input id="Date" class="form-control" placeholder="date" type="date" value="${new Date().toISOString().split('T')[0]}">
+</div>
+<div class="form-group">
+  <textarea id="AddDetail" class="form-control" placeholder="વિગત"></textarea>
+</div>
+<div class="form-group" style="width:100%;display:flex;justify-content:space-between">
+  <div id="btnJam" class="btn bg-gradient-success text-white font-bold" style="font-weight:bold">જમા</div>
+  <div id="btnUdhar" class="btn bg-gradient-danger text-white font-bold" style="font-weight:bold">ઉધાર</div>
+</div>
+
     `,
             focusConfirm: false,
             showConfirmButton: false,
@@ -73,28 +76,36 @@ const MainPanel = () => {
                     year: 'numeric'
                 }).replace("/", "-").replace("/", "-");
                 const Type = type;
-                console.log(Farmers[selectionIndex.FarmerIndex].Folder[selectionIndex.FolderIndex])
                 let newEntry = {
-                    IID: (Farmers[selectionIndex?.FarmerIndex]?.Folder[selectionIndex?.FolderIndex].Invoice) === undefined ? "0" : Farmers[selectionIndex.FarmerIndex].Folder[selectionIndex.FolderIndex].Invoice.length.toString(),
                     DATE: formattedDate,
                     DETAILS: AddDetail,
                     RUPEE: AddRupee,
                     TYPE: Type
                 }
+                const updates = {};
+                const updates2 = {};
                 toast.promise(
-                    dataRef
-                        .ref(
-                            `/Cultivator/Traders/${selectionIndex.TraderId}/Farmers/${selectionIndex.FarmerIndex}/Folder/${selectionIndex?.FolderIndex}/Invoice/${newEntry.IID}`
-                        )
-                        .set(newEntry),
+                    Promise.resolve(dataRef
+                        .ref(`/Cultivator/Traders/${selectionIndex.TraderId}/Farmers/${selectionIndex.FarmerIndex}/Folder/${selectionIndex?.FolderIndex}/Invoice`).push(newEntry).key),
                     {
                         pending: `નવી એન્ટ્રી થઇ રહી છે.. `, // Optional pending message
                         success: `નવી એન્ટ્રી થઈ ગઈ.. `,
                         error: 'કૈંક વાંધો છે.. !',
                     }
                 )
-                    .then(() => {
-                        dispatch(addEntry(newEntry));
+                    .then((IID) => {
+                        updates[`/Cultivator/Traders/${selectionIndex.TraderId}/Farmers/${selectionIndex.FarmerIndex}/Date`] = formattedDate;
+                        if (Type !== "જમા ") {
+                            updates[`/Cultivator/Traders/${selectionIndex.TraderId}/Farmers/${selectionIndex.FarmerIndex}/Balance`] = eval(Farmers[selectionIndex?.FarmerIndex]?.Balance + "-" + AddRupee);
+                            updates2[`/Cultivator/Traders/${selectionIndex.TraderId}/Farmers/${selectionIndex.FarmerIndex}/Folder/${selectionIndex?.FolderIndex}/Balance`] = eval(Farmers[selectionIndex?.FarmerIndex]?.Folder[selectionIndex?.FolderIndex].Balance + "-" + AddRupee);
+                        }
+                        else {
+                            updates[`/Cultivator/Traders/${selectionIndex.TraderId}/Farmers/${selectionIndex.FarmerIndex}/Balance`] = eval(Farmers[selectionIndex?.FarmerIndex]?.Balance + "+" + AddRupee);
+                            updates2[`/Cultivator/Traders/${selectionIndex.TraderId}/Farmers/${selectionIndex.FarmerIndex}/Folder/${selectionIndex?.FolderIndex}/Balance`] = eval(Farmers[selectionIndex?.FarmerIndex]?.Folder[selectionIndex?.FolderIndex].Balance + "+" + AddRupee);
+                        }
+                        dataRef.ref().update(updates);
+                        dataRef.ref().update(updates2);
+                        dispatch(addEntry({ ...newEntry, IID }));
                     })
                     .catch((error) => {
 
@@ -110,36 +121,25 @@ const MainPanel = () => {
         }
         let newFolder = {
             Balance: 0,
-            Invoice: [],
-            MFID: Farmers[selectionIndex.FarmerIndex]?.Folder?.length === undefined || Farmers[selectionIndex.FarmerIndex]?.Folder?.length == null ? 0 : Farmers[selectionIndex.FarmerIndex]?.Folder?.length.toString(),
+            Invoice: {},
             Year: FolderName
         };
         toast.promise(
-            dataRef
-                .ref(
-                    `/Cultivator/Traders/${selectionIndex.TraderId}/Farmers/${selectionIndex.FarmerIndex}/Folder/${newFolder.MFID}`
-                )
-                .set(newFolder),
+            Promise.resolve(dataRef.ref(`/Cultivator/Traders/${selectionIndex.TraderId}/Farmers/${selectionIndex.FarmerIndex}/Folder`).push(newFolder).key),
             {
-                pending: ` ${FolderName} ફોલ્ડર...`, // Optional pending message
-                success: `${FolderName} ફોલ્ડર ઉમેરાયું.. `,
-                error: 'કૈંક વાંધો છે.. !',
+                pending: `${FolderName} ફોલ્ડર ઉમેરાયું છે...`, // Optional pending message
+                success: `${FolderName} ફોલ્ડર ઉમેરાયું..`,
+                error: 'કૈંક વાંધો છે..!',
             }
         )
-            .then(() => {
-                dispatch(AddFoldersAuth(newFolder, selectionIndex.FarmerIndex));
+            .then((MFID) => {
+                dispatch(AddFoldersAuth({ ...newFolder, MFID }));
             })
             .catch((error) => {
-                console.log(
-                    `/Cultivator/Traders / ${selectionIndex.TraderId} / Farmers / ${selectionIndex.FarmerIndex} / Folder / ${newFolder.MFID}`
-                );
-            }).finally(() => setFolderName(""));
-
+                // Handle error
+            })
+            .finally(() => setFolderName(""));
     };
-    const handlePrint = () => {
-        // Implement the Print functionality
-    };
-
     const handleFolder = () => {
         $("#panelIcon").removeClass("mdi-home");
         $("#panelIcon").removeClass("mdi-account");
@@ -190,6 +190,7 @@ const MainPanel = () => {
     });
     return (
         <div className="main-panel">
+
             <div className="content-wrapper">
                 <div className="page-header">
                     <h3 className="page-title w-100 d-flex align-items-center">
@@ -209,10 +210,21 @@ const MainPanel = () => {
                                     <i className="mdi mdi-plus"></i>
                                     &nbsp; New &nbsp;
                                 </button>
-                                <button className="bg-gradient-primary text-white me-2 border rounded-2" id="Printbtn" onClick={handlePrint} style={{ boxShadow: '2px 2px 5px rgba(0,0,0,.1),inset -2px -2px 3px rgba(0,0,0,.2)', padding: '10px', display: 'none' }}>
-                                    &nbsp; Print &nbsp;
-                                    <i className="mdi mdi-printer"></i>
-                                </button>
+                                <ReactToPrint
+                                    trigger={() => {
+                                        return <button className="bg-gradient-primary text-white me-2 border rounded-2" id="Printbtn" onClick={() => setPrint(true)} style={{ boxShadow: '2px 2px 5px rgba(0,0,0,.1),inset -2px -2px 3px rgba(0,0,0,.2)', padding: '10px', display: 'none' }}>
+                                            &nbsp; Print &nbsp;
+                                            <i className="mdi mdi-printer"></i>
+                                        </button>
+                                    }}
+                                    onBeforeGetContent={() => setPrint(true)}
+                                    onAfterPrint={() => setPrint(false)}
+                                    content={() => componentRef.current}
+                                    pageStyle="@media print {
+                                                    @page { margin: 1px;padding:10px }
+                                                    body { margin: 1.6cm; }
+                                            }"
+                                />
                             </div>
                             <form id="FormAddFolder" style={{ display: 'none' }} onSubmit={addFolder}>
                                 <input type="text" name="" value={FolderName} onChange={(e) => setFolderName(e.target.value)} id="MainFolderName" style={{ margin: '5px', border: 'none', height: '40px', borderRadius: '5px', paddingLeft: '10px', boxShadow: '2px 2px 3px gray,inset -2px -2px 3px rgba(0,0,0,.2)' }} placeholder="Folder Name" />
@@ -240,9 +252,8 @@ const MainPanel = () => {
                     </div>
                 </div>
                 <KhedutTable />
-                <AddFarmer />
-                <ViewFarmer />
-                <Bill />
+                {Farmers !== undefined && <ViewFarmer />}
+                {Farmers !== undefined && Farmers[selectionIndex.FarmerIndex] !== undefined && <Bill ref={componentRef} PrintStyle={print} />}
             </div>
         </div>
     );
