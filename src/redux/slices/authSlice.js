@@ -57,6 +57,7 @@ const authSlice = createSlice({
         removeFolder: (state, action) => {
             const traders = JSON.parse(JSON.stringify(state.traders));
             const Folders = traders.Farmers[state.selection.FarmerIndex].Folder;
+            state.traders.Farmers[state.selection.FarmerIndex].Balance -= Folders[action.payload].Balance;
             delete Folders[action.payload];
             state.traders.Farmers[state.selection.FarmerIndex].Folder = { ...Folders };
         },

@@ -5,6 +5,22 @@ import $ from 'jquery'
 import Swal from 'sweetalert2';
 import { toast } from 'react-toastify';
 import { dataRef } from '../../config/firebase2';
+const handleIndex = () => {
+    $("#panelIcon").addClass("mdi-home");
+    $("#panelIcon").removeClass("mdi-account");
+    $("#Index").css('display', 'block');
+
+    //Khedut
+    $("#ViewKhedut").css('display', 'none');
+    $("#FormAddFolder").css('display', 'none');
+    $("#panelKhedut").css('display', 'none');
+
+    //Account
+    $("#ViewKhedutAccount").css('display', 'none');
+    $("#Printbtn").css('display', 'none');
+    $("#NewEntry").css('display', 'none');
+    $("#panelAccount").css('display', 'none');
+};
 const ViewFarmer = () => {
     const dispatch = useDispatch();
     const Traders = useSelector(selectTraders);
@@ -83,6 +99,7 @@ const ViewFarmer = () => {
                         progress: undefined,
                         theme: "dark",
                     });
+                    handleIndex();
                     dispatch(removeFarmer(selectedIndex?.FarmerIndex));
                 } catch (error) {
                     toast.error('કૈંક વાંધો છે.. !', {

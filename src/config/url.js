@@ -1,1 +1,0 @@
-export const URL = "https://cultivator-d9052-default-rtdb.firebaseio.com";

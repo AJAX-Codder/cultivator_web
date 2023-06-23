@@ -1,0 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=Piedra&display=swap');
+
+@keyframes zoomInOut {
+    0% {
+        transform: scale(0.5);
+        opacity: 0.5;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.container {
+    animation: zoomInOut 1s infinite alternate;
+}
+
+.brand-Name {
+    font-family: 'Piedra', cursive;
+    color: #fff;
+}

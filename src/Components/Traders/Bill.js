@@ -5,6 +5,8 @@ import Swal from 'sweetalert2';
 import $ from 'jquery';
 import { dataRef } from '../../config/firebase2';
 import { toast } from 'react-toastify';
+import Cookies from 'js-cookie';
+import { showHeding } from '../../redux/slices/setting';
 export const Bill = React.forwardRef((props, ref) => {
     const [leftSum, setLeftSum] = useState(0);
     const [rightSum, setRightSum] = useState(0);
@@ -16,6 +18,7 @@ export const Bill = React.forwardRef((props, ref) => {
     const selectedIndex = useSelector(selection)
     const dispatch = useDispatch();
     const formattedDate = `${day}/${month}/${year}`;
+    const show = useSelector(showHeding);
     useEffect(() => {
         calculateSums();
     }, [Farmers[selectedIndex?.FarmerIndex]?.Folder[selectedIndex?.FolderIndex]?.Invoice]);
@@ -24,7 +27,6 @@ export const Bill = React.forwardRef((props, ref) => {
         let rightTotal = 0;
         const invoice = Farmers[selectedIndex?.FarmerIndex]?.Folder[selectedIndex?.FolderIndex]?.Invoice;
         if (invoice !== null && invoice !== undefined) {
-            console.log(invoice)
             Object.values(invoice).forEach(item => {
                 if (item.TYPE === "જમા ") {
                     leftTotal += parseInt(item.RUPEE);
@@ -146,7 +148,6 @@ export const Bill = React.forwardRef((props, ref) => {
                 let updates = {};
                 let updates2 = {}
                 let invoice = Farmers[selectedIndex?.FarmerIndex]?.Folder[selectedIndex?.FolderIndex]?.Invoice[IID];
-                console.log(invoice);
                 await dataRef.ref(`/Cultivator/Traders/${selectedIndex.TraderId}/Farmers/${selectedIndex.FarmerIndex}/Folder/${selectedIndex?.FolderIndex}/Invoice/${IID}`).remove().then(() => {
                     if (invoice.TYPE !== "જમા ") {
                         updates[`/Cultivator/Traders/${selectedIndex.TraderId}/Farmers/${selectedIndex.FarmerIndex}/Balance`] = eval(Farmers[selectedIndex?.FarmerIndex]?.Balance + "+" + invoice.RUPEE);
@@ -194,9 +195,9 @@ export const Bill = React.forwardRef((props, ref) => {
                         <div ref={ref} style={{
                             padding: !props.PrintStyle ? "10px" : "0"
                         }}>
-                            <h3 className="card-title w-100 text-center">
+                            {show === "true" && <h3 className="card-title w-100 text-center">
                                 <strong>{Trade}</strong>
-                            </h3>
+                            </h3>}
                             <span className="d-flex" id="InvoiceKhedut">
                                 <p className="w-75">
                                     <b>ખેડૂત નામ: </b>

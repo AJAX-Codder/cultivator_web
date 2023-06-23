@@ -1,11 +1,9 @@
 import { configureStore } from '@reduxjs/toolkit'
 import authSlice from './slices/authSlice'
-import FarmerSlice from './slices/FarmerSlice';
-import FolderSlice from './slices/FolderSlice';
+import setting from './slices/setting';
 export const store = configureStore({
     reducer: {
         userAuth: authSlice,
-        FarmerSlice: FarmerSlice,
-        FolderSlice: FolderSlice
+        setting: setting
     },
 });

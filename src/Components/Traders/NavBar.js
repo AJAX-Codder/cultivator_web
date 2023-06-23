@@ -4,9 +4,10 @@ import { getAuth, signOut } from "firebase/auth";
 import { useDispatch, useSelector } from 'react-redux';
 import { selectTraders, setSignOut } from '../../redux/slices/authSlice';
 import { firebase } from '../../config/firebase';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import $ from 'jquery'
+import Cookies from 'js-cookie';
 const auth = getAuth(firebase);
 const Navbar = () => {
     const [click, setClick] = useState(true)
@@ -26,6 +27,7 @@ const Navbar = () => {
                 theme: "dark",
             });
             setTimeout(() => {
+                Cookies.remove("Auth");
                 dispatch(setSignOut());
             }, 3050);
         } catch (error) {

@@ -6,16 +6,15 @@ import { ModifySelection, setSignIn } from '../../redux/slices/authSlice';
 import { useDispatch } from 'react-redux'
 import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 import { firebase } from '../../config/firebase';
-import { URL } from '../../config/url';
 import Cookies from 'js-cookie';
 import { ColorRing } from 'react-loader-spinner';
 import { toast } from 'react-toastify';
+import { dataRef } from '../../config/firebase2';
 const auth = getAuth(firebase);
 const LoginForm = () => {
     const [isLoading, setLoading] = useState(false);
     const [isLoading2, setLoading2] = useState(false);
     const dispatch = useDispatch();
-    const [id, setId] = useState(0);
     const [emailId, setEmailID] = useState("");
     const [credential, setCredential] = useState({
         email: "",
@@ -32,56 +31,32 @@ const LoginForm = () => {
         const { email, password } = credential;
         try {
             await signInWithEmailAndPassword(auth, email, password);
-            const response = await fetch(`${URL}/Cultivator.json`);
-            const { Traders } = await response.json();
-            let traders = null;
-            let flag = false;
-            for (let i = 0; i < Traders.length; i++) {
-                const trader = Traders[i];
-                if (trader.Email === email) {
-                    traders = trader;
-                    setId(i);
-                    flag = true;
-                    break;
-                }
-            }
-            // let Farmer = [];
-            // for (const key in traders?.Farmers) {
-            //     const element = traders?.Farmers[key];
-            //     Farmer.push({ ...element, FID: key });
-            // }
-            if (flag) {
-                const data = {
-                    id: id,
-                    isLoggedIn: true,
-                    traders: traders,
-                    selection: {
-                        TraderId: id,
-                        FarmerIndex: null,
-                        FolderIndex: null,
-                        InvoiceIndex: null
-                    }
-                };
-                dispatch(ModifySelection({
-                    TraderId: id,
+            const snapshot = await dataRef.ref("Cultivator/Traders").once("value");
+            const data = snapshot.val();
+            const filteredData = Object.values(data).filter(obj => obj.Email === email);
+
+            if (filteredData.length > 0) {
+                const trader = filteredData[0];
+                const traderIndex = Object.keys(data).findIndex(key => data[key] === trader);
+                const oneYearFromNow = new Date();
+                oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
+                Cookies.set("Auth", email, { expires: oneYearFromNow });
+                const modifiedSelection = {
+                    TraderId: traderIndex,
                     FarmerIndex: null,
                     FolderIndex: null,
                     EntryIndex: null
-                }))
-                toast.success(`પધારો.. ${traders?.Name}!`, {
-                    position: "top-right",
-                    autoClose: 5000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: false,
-                    progress: undefined,
-                    theme: "dark",
-                });
-                setTimeout(() => {
-                    dispatch(setSignIn(data));
-                }, 3500);
+                };
+
+                dispatch(ModifySelection(modifiedSelection));
+                dispatch(setSignIn({
+                    id: traderIndex,
+                    isLoggedIn: true,
+                    traders: trader,
+                    selection: modifiedSelection
+                }));
             }
+
         } catch (error) {
             toast.error('ખોટી માહિતી છે.. !', {
                 position: "top-right",

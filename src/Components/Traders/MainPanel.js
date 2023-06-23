@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import KhedutTable from './KhedutTable';
 import ViewFarmer from './ViewFarmer';
 import $ from 'jquery';
@@ -13,13 +13,26 @@ import { toast } from 'react-toastify';
 import ReactToPrint from 'react-to-print';
 const AddFoldersAuth = (Folder) => addFolder(Folder);
 const MainPanel = () => {
+
     const selectionIndex = useSelector(selection)
-    const { Email, Trade, Farmers } = useSelector(selectTraders);
+    const { Email, Trade, Farmers, Name } = useSelector(selectTraders);
     const [isLoading, setIsLoading] = useState(false);
     const [FolderName, setFolderName] = useState("");
     let dispatch = useDispatch();
     const componentRef = useRef();
     const [print, setPrint] = useState(false);
+    useEffect(() => {
+        toast.success(`પધારો.. ${Name}!`, {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: false,
+            progress: undefined,
+            theme: "dark",
+        });
+    }, [])
     const handleNewEntry = () => {
         Swal.fire({
             title: 'નવી નોંધ',

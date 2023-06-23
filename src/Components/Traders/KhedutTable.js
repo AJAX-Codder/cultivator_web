@@ -17,9 +17,11 @@ function KhedutTable() {
     // const id = useSelector(selectId);
     const selectedIndex = useSelector(selection)
     useEffect(() => {
-        // let arr = Object.entries(Farmers)
-        // arr.sort((a, b) => a[1]?.Name.localeCompare(b[1]?.Name));
-        // setFilteredFarmers(Object.fromEntries(arr));
+        if (Farmers != null && Farmers != undefined) {
+            let arr = Object.entries(Farmers)
+            arr.sort((a, b) => a[1]?.Name.localeCompare(b[1]?.Name));
+            setFilteredFarmers(Object.fromEntries(arr));
+        }
     }, [Farmers]);
     useEffect(() => {
         // const totalPages = Math.ceil(Object.keys(filteredFarmers).length / PAGE_SIZE);
@@ -244,7 +246,7 @@ function KhedutTable() {
                                     </tr>
                                 </thead>
                                 <tbody id="KhedutTable">
-                                    {Object.keys(Farmers).map((key) => {
+                                    {Object.keys(filteredFarmers).map((key) => {
                                         const farmer = Farmers[key];
                                         let statuscolor = farmer?.Balance === 0 ? 'info' : farmer?.Balance > 0 ? 'success' : 'danger';
                                         let status = farmer?.Balance === 0 ? 'પૂર્ણ' : farmer?.Balance > 0 ? 'જમા' : 'બાકી';
