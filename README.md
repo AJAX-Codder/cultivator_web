@@ -1,70 +1,87 @@
-# Getting Started with Create React App
+## Login
+  ![image](https://github.com/AJAX-Codder/cultivator_web/assets/126388812/abdc44f9-4dad-4aed-8a27-650980346739)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Forgot Password
+  ![image](https://github.com/AJAX-Codder/cultivator_web/assets/126388812/56470b32-a03f-40fe-bdf3-673e6b43c9ca)
 
-## Available Scripts
+# Dashbord
+![image](https://github.com/AJAX-Codder/cultivator_web/assets/126388812/6c2d24d5-d837-4d7a-ac4f-4fb670828653)
 
-In the project directory, you can run:
+# Add Farmer
+![image](https://github.com/AJAX-Codder/cultivator_web/assets/126388812/7fda0511-a754-4645-bd27-1590f21d4611)
 
-### `npm start`
+# Edit ℹ Information 
+![image](https://github.com/AJAX-Codder/cultivator_web/assets/126388812/34a6ef99-7780-4869-99fc-45f75885ef37)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+# Tost
+![image](https://github.com/AJAX-Codder/cultivator_web/assets/126388812/0af25dc1-5ccf-4b5b-a966-22ea1d3f1072)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+# Delete Farmer
+![image](https://github.com/AJAX-Codder/cultivator_web/assets/126388812/e7ff613f-c48e-4d22-b633-83398fbf6420)
 
-### `npm test`
+# Folder Screen
+![image](https://github.com/AJAX-Codder/cultivator_web/assets/126388812/318f0f75-9a22-4cb2-befe-53d229f4259e)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+# Add Folder
+![image](https://github.com/AJAX-Codder/cultivator_web/assets/126388812/59723bd4-08a9-435c-b637-43375afbb364)
 
-### `npm run build`
+# Bill Screen 
+## Without Heading
+![image](https://github.com/AJAX-Codder/cultivator_web/assets/126388812/e62aa22f-7387-4850-afc2-f662e9d56fa3)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## With Heading
+![image](https://github.com/AJAX-Codder/cultivator_web/assets/126388812/b0fd086a-3c19-4f4e-8927-da75cb0dcae6)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+# New Entry
+![image](https://github.com/AJAX-Codder/cultivator_web/assets/126388812/01dd1bc3-b5f1-4382-8e19-f5d6fa525aad)
+![image](https://github.com/AJAX-Codder/cultivator_web/assets/126388812/0d896b6f-1b3c-4b33-8df8-a1c1f539a906)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+# Print Bill 
+![image](https://github.com/AJAX-Codder/cultivator_web/assets/126388812/a535294b-0f19-441a-b75b-bf7be993f5d0)
 
-### `npm run eject`
+# Change Folder Status 
+it color show it status
+![image](https://github.com/AJAX-Codder/cultivator_web/assets/126388812/7e5c19d4-b975-4b04-9147-0c96b04d3e0f)
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+# Edit Entry
+![image](https://github.com/AJAX-Codder/cultivator_web/assets/126388812/2aa93e98-7a03-4f7e-adb7-12106d6dcbbe)
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+After Edit from "ઉધાર " to  "જમા "
+![image](https://github.com/AJAX-Codder/cultivator_web/assets/126388812/b39d7f56-4540-4e5d-b6ae-a22cc521afed)
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+Folder Status
+![image](https://github.com/AJAX-Codder/cultivator_web/assets/126388812/03532e52-1eef-44f6-9a25-a4a405c38638)
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+# Delete Entry
+![image](https://github.com/AJAX-Codder/cultivator_web/assets/126388812/387604c9-b6f7-4bf0-a5b1-d06cd3cbf502)
 
-## Learn More
+After delete
+![image](https://github.com/AJAX-Codder/cultivator_web/assets/126388812/1930d175-41e9-4c53-92e5-8cfac65549ba)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Folder status after delete
+![image](https://github.com/AJAX-Codder/cultivator_web/assets/126388812/d5a5e0bc-bb0f-438f-993b-338a53eefb36)
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+# Manual Backup
 
-### Code Splitting
+backup status button bottom right
+![image](https://github.com/AJAX-Codder/cultivator_web/assets/126388812/ffc94810-d680-4009-b215-e9a06cad5d2e)
+![image](https://github.com/AJAX-Codder/cultivator_web/assets/126388812/44f30d41-7619-446f-9a14-710ab5f79246)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+# Sidebar
+![image](https://github.com/AJAX-Codder/cultivator_web/assets/126388812/c95c0266-514d-4f7b-91f3-cd8020044d6e)
+![image](https://github.com/AJAX-Codder/cultivator_web/assets/126388812/95372f2a-4d37-4520-98af-def9b9409953)
 
-### Analyzing the Bundle Size
+# Full screen
+![image](https://github.com/AJAX-Codder/cultivator_web/assets/126388812/3b975006-641a-4530-a3f7-4fb88c00c9d9)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
 
-### Making a Progressive Web App
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
 
-### Advanced Configuration
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
 
-### Deployment
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
 
-### `npm run build` fails to minify
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+
+
